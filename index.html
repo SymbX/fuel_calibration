@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>FuelApp</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="semantic.min.css">
+		<script type="text/javascript" src="jquery.min.js"></script>
+		<script type="text/javascript" src="semantic.min.js"></script>
+		<script type="text/javascript">
+			window.resizeTo(480,740);
+			function calculate() {
+				var src = $('#area').val();
+				src = src.split('\n');
+				var data = [];
+				for(var i in src) {
+					var tmp = src[i].replace(/\s+/g, ' ').split(' ');
+					if(tmp.length > 1 && !isNaN(parseInt(tmp[0])))
+						if(tmp.length == 2)
+							data.push([parseInt(tmp[0]), parseInt(tmp[1])]);
+						else if(tmp.length == 3)
+							data.push([parseInt(tmp[1]), parseInt(tmp[2])]);
+				}
+				var base = data[0][0];
+				var range = 0;
+				var res = []
+				var j = 0;
+				for(var i = 1; i < data.length; i++) {
+					range = (data[i][0] - data[i-1][0])/(data[i][1] - data[i-1][1]);
+					for(j = data[i-1][1]; j < data[i][1]; j++) {
+						//console.log(range, j, Math.round(base));
+						res.push([j, base]);
+						base += range;
+					}
+				}
+				var pullup = Math.ceil(base/500)*500;
+				for(var u = base; base <= pullup; base+=range) {
+					res.push([j, base]);
+					j++;
+				}
+				res.push([j, base]);
+				var dst = '';
+				for(var i in res) {
+					dst += Math.round(res[i][1])+';'+res[i][0]+'\r\n';
+				}
+				$('#area').val(dst);
+			}
+			function useFile(e) {
+				var files = e.target.files;
+				var reader = new FileReader();
+				reader.onload = function(rr) {
+					$('#filename').val(files[0].name.substring(0, files[0].name.length-4));
+					$('#area').val(rr.target.result);
+					calculate();
+				};
+				reader.readAsText(files[0]);
+			}
+			function download() {
+				$('.ui.modal').modal('show');
+			}
+			function downloadFile() {
+				var obj = $('#area').val().replace(/\n/g, '\r\n');
+				var filename = $('#filename').val();
+				var blob = new Blob([obj], {type: 'text/plain'});
+				if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+					window.navigator.msSaveOrOpenBlob(blob, filename);
+				} else{
+					var e = document.createEvent('MouseEvents'),
+					a = document.createElement('a');
+					a.download = filename;
+					a.href = window.URL.createObjectURL(blob);
+					a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+					e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+					a.dispatchEvent(e);
+				}
+			}
+		</script>
+		<style type="text/css">
+			body {
+				padding: 4px;
+			}
+		</style>
+	</head>
+	<body>
+		<form class="ui large form">
+			<div class="field">
+				<label>Текст</label>
+				<textarea id="area" rows="32"></textarea>
+			</div>
+			<input type="file" onchange="useFile(event);" style="display: none;" type="text/*" id="txt">
+			<div class="ui fluid buttons">
+				<button class="ui teal button" onclick="calculate(); return false;"><i class="icon calculator"></i> Посчитать</button>
+				<label for="txt" class="ui primary button"><i class="icon file alternate outline"></i> Файл</label>
+				<button class="ui brown button" onclick="download(); return false;"><i class="icon download"></i> Скачать</button>
+			</div>
+		</form>
+		<div class="ui modal">
+			<div class="header">Имя файла</div>
+			<div class="content">
+				<div class="ui fluid action input">
+					<input type="text" id="filename">
+					<button class="ui button" onclick="downloadFile();">Скачать</button>
+				</div>
+			</div>
+			<div class="actions">
+				<div class="ui deny black button">Закрыть</div>
+			</div>
+		</div>
+	</body>
+</html>
