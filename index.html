@@ -45,12 +45,14 @@
 					}
 				}
 				var pullup = data[0][0] == 50000 ? (Math.ceil(base/50000)*50000) : 409500;
-				console.log(pullup, range, data[0][0]);
 				for(var u = base; base <= pullup; base+=range) {
 					res.push([j, base]);
 					j++;
 				}
 				res.push([j, base]);
+				if(pullup == 409500) {
+					res[res.length-1][1] = 409500;
+				}
 				var dst = '';
 				for(var i in res) {
 					dst += Math.round(res[i][1]/100)+';'+res[i][0]+'\r\n';
