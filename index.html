@@ -74,7 +74,7 @@
 			}
 			function downloadFile() {
 				var obj = $('#area').val().replace(/\n/g, '\r\n');
-				var filename = $('#filename').val();
+				var filename = $('#filename').val()+'.txt';
 				var blob = new Blob([obj], {type: 'text/plain'});
 				if (window.navigator && window.navigator.msSaveOrOpenBlob) {
 					window.navigator.msSaveOrOpenBlob(blob, filename);
@@ -88,6 +88,10 @@
 					a.dispatchEvent(e);
 				}
 				$('.ui.modal').modal('hide');
+			}
+			function clean() {
+				$('#filename').val('');
+				$('#area').val('');
 			}
 		</script>
 		<style type="text/css">
@@ -107,6 +111,7 @@
 				<button class="ui teal button" onclick="calculate(); return false;"><i class="icon calculator"></i> Посчитать</button>
 				<label for="txt" class="ui primary button"><i class="icon file alternate outline"></i> Файл</label>
 				<button class="ui brown button" onclick="download(); return false;"><i class="icon download"></i> Скачать</button>
+				<button class="ui orange button" onclick="clean(); return false;"><i class="icon recycle"></i> Очистить</button>
 			</div>
 		</form>
 		<div class="ui modal">
