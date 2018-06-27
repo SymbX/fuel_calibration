@@ -45,14 +45,21 @@
 					}
 				}
 				var pullup = data[0][0] >= 50000 ? (Math.ceil(base/50000)*50000) : 409500;
-				for(var u = base; base <= pullup; base+=range) {
-					res.push([j, base]);
-					j++;
+				var puc = parseInt($('#pullup').val());
+				if(!isNaN(puc)) {
+					console.log(j, 'to', puc);
+					for(; j < puc; j++) {
+						res.push([j, base]);
+						base += range;
+					}
+				}else{
+					for(var u = base; base <= pullup; base+=range) {
+						res.push([j, base]);
+						j++;
+					}
 				}
 				res.push([j, base]);
-				/*if(pullup == 409500) {
-					res[res.length-1][1] = 409500;
-				}*/
+				console.log(pullup, puc);
 				var dst = '';
 				for(var i in res) {
 					dst += Math.round(res[i][1]/100)+';'+res[i][0]+'\r\n';
@@ -105,6 +112,10 @@
 			<div class="field">
 				<label>Текст</label>
 				<textarea id="area" rows="32"></textarea>
+			</div>
+			<div class="field">
+				<label>Дотянуть</label>
+				<input type="number" id="pullup">
 			</div>
 			<input type="file" onchange="useFile(event);" style="display: none;" type="text/*" id="txt">
 			<div class="ui fluid buttons">
