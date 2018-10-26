@@ -1,0 +1,22 @@
+{
+  "name": "FuelCalibrationApp",
+  "short_name": "FuelApp",
+  "lang": "ru-RU",
+  "start_url": "/fuel_calibration/",
+  "scope": "/fuel_calibration/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/fuel_calibration/images/favicon-256.png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "/fuel_calibration/images/favicon-192.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/fuel_calibration/images/favicon-128.png",
+      "sizes": "128x128"
+    }
+  ]
+}
