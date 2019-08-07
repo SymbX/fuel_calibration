@@ -117,7 +117,8 @@
 			function calibrate() {
 				var l = parseFloat($('#flow').val());
 				var v = parseFloat($('#flow-val').val());
-				$('#flow-res').text(Math.round((34 - ((v * 16) / l))/34*10000)/100 + '%');
+				$('#flow-res > span').text(Math.round((34 - ((v * 16) / l))/34*10000)/100);
+				$('#flow-pulse > span').text(Math.round((v * 16) / l * 100)/100);
 			}
 			window.onload = function () {
 				if ('serviceWorker' in navigator) {
@@ -181,7 +182,8 @@
 					<label>Значения</label>
 					<input type="number" id="flow-val">
 				</div>
-				<label class="ui red label" id="flow-res">0%</label>
+				<label class="ui red label" id="flow-res">Коррекция уровня топлива: <span>0</span>%</label>
+				<label class="ui orange label" id="flow-pulse">Кол-во импульсов на литр: <span>0</span></label>
 				<br />
 				<button class="ui fluid button" onclick="calibrate();">Посчитать</button>
 			</div>
