@@ -114,6 +114,11 @@
 				$('#filename').val('');
 				$('#area').val('');
 			}
+			window.onload = function () {
+				if ('serviceWorker' in navigator) {
+					navigator.serviceWorker.register('/fuel_calibration/sw.js');
+				}
+			}
 		</script>
 		<style type="text/css">
 			body {
