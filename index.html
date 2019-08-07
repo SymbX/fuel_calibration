@@ -114,6 +114,11 @@
 				$('#filename').val('');
 				$('#area').val('');
 			}
+			function calibrate() {
+				var l = parseFloat($('#flow').val());
+				var v = parseFloat($('#flow-val').val());
+				$('#flow-res').text(Math.round((34 - ((v * 16) / l))/34*10000)/100 + '%');
+			}
 			window.onload = function () {
 				if ('serviceWorker' in navigator) {
 					navigator.serviceWorker.register('/fuel_calibration/sw.js');
@@ -127,36 +132,58 @@
 		</style>
 	</head>
 	<body>
-		<form class="ui large form">
-			<div class="field">
-				<label>Текст</label>
-				<textarea id="area" rows="32"></textarea>
-			</div>
-			<div class="field">
-				<label>Дотянуть</label>
-				<div class="ui right labeled input">
-					<input type="number" id="pullup">
-					<div class="ui basic label">л.</div>
+		<div class="ui top attached header">Тарировка</div>
+		<div class="ui bottom attached green segment">
+			<form class="ui large form">
+				<div class="field">
+					<label>Текст</label>
+					<textarea id="area" rows="16"></textarea>
+				</div>
+				<div class="field">
+					<label>Дотянуть</label>
+					<div class="ui right labeled input">
+						<input type="number" id="pullup">
+						<div class="ui basic label">л.</div>
+					</div>
+				</div>
+				<input type="file" onchange="useFile(event);" style="display: none;" type="text/*" id="txt">
+				<div class="ui fluid buttons">
+					<button class="ui teal button" onclick="calculate(); return false;"><i class="icon calculator"></i> Посчитать</button>
+					<label for="txt" class="ui primary button"><i class="icon file alternate outline"></i> Файл</label>
+					<button class="ui brown button" onclick="download(); return false;"><i class="icon download"></i> Скачать</button>
+					<button class="ui orange button" onclick="clean(); return false;"><i class="icon recycle"></i> Очистить</button>
+				</div>
+			</form>
+			<div class="ui modal">
+				<div class="header">Имя файла</div>
+				<div class="content">
+					<div class="ui fluid action input">
+						<input type="text" id="filename">
+						<button class="ui button" onclick="downloadFile();">Скачать</button>
+					</div>
+				</div>
+				<div class="actions">
+					<div class="ui deny black button">Закрыть</div>
 				</div>
 			</div>
-			<input type="file" onchange="useFile(event);" style="display: none;" type="text/*" id="txt">
-			<div class="ui fluid buttons">
-				<button class="ui teal button" onclick="calculate(); return false;"><i class="icon calculator"></i> Посчитать</button>
-				<label for="txt" class="ui primary button"><i class="icon file alternate outline"></i> Файл</label>
-				<button class="ui brown button" onclick="download(); return false;"><i class="icon download"></i> Скачать</button>
-				<button class="ui orange button" onclick="clean(); return false;"><i class="icon recycle"></i> Очистить</button>
-			</div>
-		</form>
-		<div class="ui modal">
-			<div class="header">Имя файла</div>
-			<div class="content">
-				<div class="ui fluid action input">
-					<input type="text" id="filename">
-					<button class="ui button" onclick="downloadFile();">Скачать</button>
+		</div>
+		<div class="ui top attached header">Калибровка счетчика</div>
+		<div class="ui bottom attached blue segment">
+			<div class="ui large form">
+				<div class="field">
+					<label>Объем пролива</label>
+					<div class="ui right labeled input">
+						<input type="text" id="flow">
+						<div class="ui basic label">л.</div>
+					</div>
 				</div>
-			</div>
-			<div class="actions">
-				<div class="ui deny black button">Закрыть</div>
+				<div class="field">
+					<label>Значения</label>
+					<input type="number" id="flow-val">
+				</div>
+				<label class="ui red label" id="flow-res">0%</label>
+				<br />
+				<button class="ui fluid button" onclick="calibrate();">Посчитать</button>
 			</div>
 		</div>
 	</body>
