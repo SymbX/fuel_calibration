@@ -115,8 +115,8 @@
 				$('#area').val('');
 			}
 			function calibrate() {
-				var l = parseFloat($('#flow').val());
-				var v = parseFloat($('#flow-val').val());
+				var l = parseFloat($('#flow').val().replace(/,/, '.'));
+				var v = parseInt($('#flow-val').val());
 				$('#flow-res > span').text(Math.round((34 - ((v * 16) / l))/34*10000)/100);
 				$('#flow-pulse > span').text(Math.round((v * 16) / l * 100)/100);
 			}
