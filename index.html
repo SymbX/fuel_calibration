@@ -21,7 +21,7 @@
 		<link rel="icon" sizes="128x128" href="/fuel_calibration/images/favicon-128.png">
 		<link rel="apple-touch-icon" sizes="128x128" href="/fuel_calibration/images/favicon-128.png">
 		<script type="text/javascript">
-			window.resizeTo(560,920);
+			window.resizeTo(560,870);
 			function calculate() {
 				var src = $('#area').val();
 				src = src.split('\n');
@@ -115,77 +115,100 @@
 				$('#area').val('');
 			}
 			function calibrate() {
-				var l = parseFloat($('#flow').val().replace(/,/, '.'));
+				var l = parseFloat($('#flow').val());
 				var v = parseInt($('#flow-val').val());
-				$('#flow-res > span').text(Math.round((34 - ((v * 16) / l))/34*10000)/100);
-				$('#flow-pulse > span').text(Math.round((v * 16) / l * 100)/100);
+				var m = parseInt($('#flow-max').val()); // 34;
+				var c = parseInt($('#flow-now').val()); // 8;
+				var d = parseInt($('#flow-div').val()); // 2;
+				$('#flow-res > span').text(Math.round((m - ((v * d * c) / l))/m*10000)/100);
+				$('#flow-pulse > span').text(Math.round((v * d * c) / l * 100)/100);
 			}
 			window.onload = function () {
 				if ('serviceWorker' in navigator) {
 					navigator.serviceWorker.register('/fuel_calibration/sw.js');
 				}
+				$('.ui.accordion').accordion();
 			}
 		</script>
 		<style type="text/css">
 			body {
 				padding: 4px;
 			}
+			.ui.accordion {
+				width: 100% !important;
+			}
 		</style>
 	</head>
 	<body>
-		<div class="ui top attached header">Тарировка</div>
-		<div class="ui bottom attached green segment">
-			<form class="ui large form">
-				<div class="field">
-					<label>Текст</label>
-					<textarea id="area" rows="16"></textarea>
-				</div>
-				<div class="field">
-					<label>Дотянуть</label>
-					<div class="ui right labeled input">
-						<input type="number" id="pullup">
-						<div class="ui basic label">л.</div>
+		<div class="ui styled accordion">
+			<div class="title active">Тарировка</div>
+			<div class="content active">
+				<form class="ui large form">
+					<div class="field">
+						<label>Текст</label>
+						<textarea id="area" rows="28"></textarea>
 					</div>
-				</div>
-				<input type="file" onchange="useFile(event);" style="display: none;" type="text/*" id="txt">
-				<div class="ui fluid buttons">
-					<button class="ui teal button" onclick="calculate(); return false;"><i class="icon calculator"></i> Посчитать</button>
-					<label for="txt" class="ui primary button"><i class="icon file alternate outline"></i> Файл</label>
-					<button class="ui brown button" onclick="download(); return false;"><i class="icon download"></i> Скачать</button>
-					<button class="ui orange button" onclick="clean(); return false;"><i class="icon recycle"></i> Очистить</button>
-				</div>
-			</form>
-			<div class="ui modal">
-				<div class="header">Имя файла</div>
-				<div class="content">
-					<div class="ui fluid action input">
-						<input type="text" id="filename">
-						<button class="ui button" onclick="downloadFile();">Скачать</button>
+					<div class="field">
+						<label>Дотянуть</label>
+						<div class="ui right labeled input">
+							<input type="number" id="pullup">
+							<div class="ui basic label">л.</div>
+						</div>
 					</div>
-				</div>
-				<div class="actions">
-					<div class="ui deny black button">Закрыть</div>
+					<input type="file" onchange="useFile(event);" style="display: none;" type="text/*" id="txt">
+					<div class="ui fluid buttons">
+						<button class="ui teal button" onclick="calculate(); return false;"><i class="icon calculator"></i> Посчитать</button>
+						<label for="txt" class="ui primary button"><i class="icon file alternate outline"></i> Файл</label>
+						<button class="ui brown button" onclick="download(); return false;"><i class="icon download"></i> Скачать</button>
+						<button class="ui orange button" onclick="clean(); return false;"><i class="icon recycle"></i> Очистить</button>
+					</div>
+				</form>
+			</div>
+			<div class="title">Калибровка счетчика</div>
+			<div class="content">
+				<div class="ui large form">
+					<div class="field">
+						<label>Объем пролива</label>
+						<div class="ui right labeled input">
+							<input type="text" id="flow">
+							<div class="ui basic label">л.</div>
+						</div>
+					</div>
+					<div class="field">
+						<label>Значения</label>
+						<input type="number" id="flow-val">
+					</div>
+					<div class="fields row">
+						<div class="field">
+							<label>Кол-во импульсов на литр до делителя</label>
+							<input type="number" id="flow-max" value="34">
+						</div>
+						<div class="field">
+							<label>Текущее кол-во импульсов на литр</label>
+							<input type="number" id="flow-now" value="8">
+						</div>
+						<div class="field">
+							<label>Делитель</label>
+							<input type="number" id="flow-div" value="2">
+						</div>
+					</div>
+					<label class="ui red label" id="flow-res">Коррекция уровня топлива: <span>0</span>%</label>
+					<label class="ui orange label" id="flow-pulse">Кол-во импульсов на литр: <span>0</span></label>
+					<br />
+					<button class="ui fluid button" onclick="calibrate();">Посчитать</button>
 				</div>
 			</div>
 		</div>
-		<div class="ui top attached header">Калибровка счетчика</div>
-		<div class="ui bottom attached blue segment">
-			<div class="ui large form">
-				<div class="field">
-					<label>Объем пролива</label>
-					<div class="ui right labeled input">
-						<input type="text" id="flow">
-						<div class="ui basic label">л.</div>
-					</div>
+		<div class="ui modal">
+			<div class="header">Имя файла</div>
+			<div class="content">
+				<div class="ui fluid action input">
+					<input type="text" id="filename">
+					<button class="ui button" onclick="downloadFile();">Скачать</button>
 				</div>
-				<div class="field">
-					<label>Значения</label>
-					<input type="number" id="flow-val">
-				</div>
-				<label class="ui red label" id="flow-res">Коррекция уровня топлива: <span>0</span>%</label>
-				<label class="ui orange label" id="flow-pulse">Кол-во импульсов на литр: <span>0</span></label>
-				<br />
-				<button class="ui fluid button" onclick="calibrate();">Посчитать</button>
+			</div>
+			<div class="actions">
+				<div class="ui deny black button">Закрыть</div>
 			</div>
 		</div>
 	</body>
