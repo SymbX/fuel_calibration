@@ -123,6 +123,90 @@
 				$('#flow-res > span').text(Math.round((m - ((v * d * c) / l))/m*10000)/100);
 				$('#flow-pulse > span').text(Math.round((v * d * c) / l * 100)/100);
 			}
+			function parseAZK(text) {
+				return text.replace(/\r\n/g, '\n').split('\n').map((l) =>  l.trim().replace(/[\s\t:;]+/g, ' ')).filter((l) => l.length > 2 && /^[\d.,\s]+$/.test(l)).map((l) => l.split(' ').map((n) => parseFloat(n.replace(',', '.'))));
+			}
+			function usingAutoDiff(code, mm) {
+				var result = [];
+				var fl = true;
+				var prev_level;
+				var prev_val;
+				for (var line of code) {
+					if (fl) {
+						fl = false;
+						prev_level = line[0];
+						if (!mm) {
+							prev_level *= 10;
+						}
+						prev_val = line[1]
+						continue;
+					}
+
+					var diff = (line[1] - prev_val) / 10.0;
+
+					var level = line[0];
+					var value = line[1];
+					if (!mm) {
+						level *= 10;
+					}
+
+					while (prev_level < level) {
+						result.push({
+							level: prev_level,
+							value: prev_val * 1000
+						});
+						prev_level += 1;
+						prev_val += diff;
+					}
+				}
+				result.push({
+					level: prev_level,
+					value: prev_val * 1000
+				});
+				console.log(result);
+				return result;
+			}
+			function usingFixDiff(code, mm) {
+				var result = [];
+				for (var line of code) {
+					var level = line[0];
+					if (!mm) {
+						level *= 10;
+					}
+					var current = level;
+					var value = line[1];
+					var diff = line[2];
+					while (current < level + 10) {
+						result.push({
+							level: current,
+							value: value * 1000
+						});
+						current += 1;
+						value += diff;
+					}
+				}
+				return result
+			}
+			function runAZK() {
+				var text = document.getElementById('area').value;
+				var code = parseAZK(text);
+				var colsLen = Math.round(code.reduce((a, c) => {
+					a += c.length;
+					return a;
+				}, 0) / code.length)
+				code = code.filter((c) => c.length == colsLen)
+				if (code.length < 1) {
+					alert('No data');
+					return;
+				}
+				var type = confirm('Первый столбец в милиметрах?')
+				code = code[0].length == 2 ? usingAutoDiff(code, type) : usingFixDiff(code, type);
+				var result = [];
+				for (var line of code) {
+					result.push((line.level * 10) + ';' + Math.round(line.value));
+				}
+				$('#area').val(result.join('\n'));
+			}
 			window.onload = function () {
 				if ('serviceWorker' in navigator) {
 					navigator.serviceWorker.register('/fuel_calibration/sw.js');
@@ -161,6 +245,7 @@
 						<label for="txt" class="ui primary button"><i class="icon file alternate outline"></i> Файл</label>
 						<button class="ui brown button" onclick="download(); return false;"><i class="icon download"></i> Скачать</button>
 						<button class="ui orange button" onclick="clean(); return false;"><i class="icon recycle"></i> Очистить</button>
+						<button class="ui green button" onclick="runAZK(); return false;"><i class="icon tint"></i> Калибровка МЛС</button>
 					</div>
 				</form>
 			</div>
