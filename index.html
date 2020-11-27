@@ -117,7 +117,7 @@
 			function calibrate() {
 				var l = parseFloat($('#flow').val());
 				var v = parseInt($('#flow-val').val());
-				var m = parseInt($('#flow-max').val()); // 34;
+				var m = parseFloat($('#flow-max').val()); // 34;
 				var c = parseInt($('#flow-now').val()); // 8;
 				var d = parseInt($('#flow-div').val()); // 2;
 				$('#flow-res > span').text(Math.round((m - ((v * d * c) / l))/m*10000)/100);
