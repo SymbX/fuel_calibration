@@ -207,6 +207,18 @@
 				}
 				$('#area').val(result.join('\n'));
 			}
+			function tank_offset() {
+				var lenp = document.getElementById('tank-lenp').value;
+				var fl = document.getElementById('tank-fl').value;
+				var mm = document.getElementById('tank-mm').value;
+				if (mm > 3200) {
+					mm = Math.floor(mm / 10);
+				}
+				mm *= 10;
+				var off = (lenp-fl-mm);
+				$('#tank-res > span').text(off);
+				$('#tank-cmd > span').text(off);
+			}
 			window.onload = function () {
 				if ('serviceWorker' in navigator) {
 					navigator.serviceWorker.register('/fuel_calibration/sw.js');
@@ -281,6 +293,26 @@
 					<label class="ui orange label" id="flow-pulse">Кол-во импульсов на литр: <span>0</span></label>
 					<br />
 					<button class="ui fluid button" onclick="calibrate();">Посчитать</button>
+				</div>
+			</div>
+			<div class="title">Смещение уровнемера</div>
+			<div class="content">
+				<div class="ui large form">
+					<div class="field">
+						<label>Высота уровнемера (lenp)</label>
+						<input type="number" id="tank-lenp" value="0">
+					</div>
+					<div class="field">
+						<label>Уровень (fl)</label>
+						<input type="number" id="tank-fl" value="0">
+					</div>
+					<div class="field">
+						<label>Требуемый уровень (MM)</label>
+						<input type="number" id="tank-mm" value="0">
+					</div>
+					<label class="ui green label" id="tank-res">Смещение: <span>0</span></label>
+					<label class="ui teal label" id="tank-cmd">$st+cmdepsilon=0000,?,217,h<span>0</span></label>
+					<button class="ui fluid button" onclick="tank_offset();">Посчитать</button>
 				</div>
 			</div>
 		</div>
