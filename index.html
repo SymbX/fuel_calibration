@@ -219,11 +219,25 @@
 				$('#tank-res > span').text(off);
 				$('#tank-cmd > span').text(off);
 			}
+			function track_report() {
+				var res = 0;
+				$('.track-rep').each(function (i, e) {
+					var val = parseInt(e.value);
+					if (e.checked) {
+						res |= (1 << val);
+					}
+				});
+				res = res.toString(16);
+				$('#tr-res > span').text(res)
+				$('#tr-cmd > span').text(res)
+			}
 			window.onload = function () {
 				if ('serviceWorker' in navigator) {
 					navigator.serviceWorker.register('/fuel_calibration/sw.js');
 				}
 				$('.ui.accordion').accordion();
+				$('.track-rep').on('change', track_report);
+				track_report();
 			}
 		</script>
 		<style type="text/css">
@@ -242,7 +256,7 @@
 				<form class="ui large form">
 					<div class="field">
 						<label>Текст</label>
-						<textarea id="area" rows="28"></textarea>
+						<textarea id="area" rows="27"></textarea>
 					</div>
 					<div class="field">
 						<label>Дотянуть</label>
@@ -313,6 +327,99 @@
 					<label class="ui green label" id="tank-res">Смещение: <span>0</span></label>
 					<label class="ui teal label" id="tank-cmd">$st+cmdepsilon=0000,?,217,h<span>0</span></label>
 					<button class="ui fluid button" onclick="tank_offset();">Посчитать</button>
+				</div>
+			</div>
+			<div class="title">TrackReport</div>
+			<div class="content">
+				<div class="ui large form">
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-gps-lost" value="0" class="track-rep">
+							<label>Событие потери GPS</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-gps-ok" value="1" class="track-rep">
+							<label>Событие восстановления GPS</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-pwr-lost" value="2" class="track-rep">
+							<label>Событие потери питания</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-gps-norm" value="3" class="track-rep">
+							<label>Событие нормализации питания</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-gps-norm" value="4" class="track-rep">
+							<label>Событие низкого питания</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-acc-low" value="5" class="track-rep">
+							<label>Событие низкого заряда</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-metka" value="6" class="track-rep">
+							<label>Событие метки</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-fuel" value="7" class="track-rep">
+							<label>События топлива</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-sms" value="8" class="track-rep">
+							<label>Трекинг по СМС</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-sms-event" value="9" class="track-rep">
+							<label>Только события по СМС (без трекинга позиции)</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-gsm" value="10" class="track-rep">
+							<label>События GSM</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-accel" value="11" class="track-rep">
+							<label>Событие акселерометра</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-can" value="12" class="track-rep">
+							<label>Событие CAN</label>
+						</div>
+					</div>
+					<!--
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" id="tr-pwr" value="14" class="track-rep">
+							<label>События изменения питания</label>
+						</div>
+					</div>-->
+					<label class="ui green label" id="tr-res">Значение: <span>0</span></label>
+					<label class="ui teal label" id="tr-cmd">$st+trackreport=0000,ff,ff,fffff,fffff,<span>0</span></label>
+					<!--<button class="ui fluid button" onclick="track_report();">Посчитать</button>-->
 				</div>
 			</div>
 		</div>
